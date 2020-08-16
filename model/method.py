@@ -12,7 +12,7 @@ import torch
 wnl = nltk.WordNetLemmatizer()
 with open('/content/drive/My Drive/SIFRank/auxiliary_data/japanese_stopwords.txt') as f:
    stop_words = [line.rstrip('\n') for line in f]
-   stopword_dict = set(stop_words)
+   stop_words = set(stop_words)
 
 
 def cos_sim_gpu(x, y):
