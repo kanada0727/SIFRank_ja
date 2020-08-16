@@ -8,7 +8,9 @@ import nltk
 from nltk.corpus import stopwords
 
 english_punctuations = [',', '.', ':', ';', '?', '(', ')', '[', ']', '&', '!', '*', '@', '#', '$', '%']
-stop_words = set(stopwords.words("english"))
+with open('/content/drive/My Drive/SIFRank/auxiliary_data/japanese_stopwords.txt') as f:
+   stop_words = [line.rstrip('\n') for line in f]
+   stop_words = set(stop_words)
 wnl = nltk.WordNetLemmatizer()
 considered_tags = {'NN', 'NNS', 'NNP', 'NNPS', 'JJ', 'VBG'}
 
