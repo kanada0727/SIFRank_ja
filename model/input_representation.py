@@ -14,16 +14,16 @@ with open('/content/drive/My Drive/SIFRank/auxiliary_data/japanese_stopwords.txt
 class InputTextObj:
     """Represent the input text in which we want to extract keyphrases"""
 
-    def __init__(self, en_model: Pipeline, text=""):
+    def __init__(self, ja_model: Pipeline, text=""):
         """
         :param is_sectioned: If we want to section the text.
-        :param en_model: the pipeline of tokenization and POS-tagger
+        :param ja_model: the pipeline of tokenization and POS-tagger
         :param considered_tags: The POSs we want to keep
         """
         self.phrase_extractor = PhraseExtractor()
 
         # get Document object of stanza (latest StanfordCoreNLP model)
-        doc = en_model(text)
+        doc = ja_model(text)
         self.tokens = [word.text for sentence in doc.sentences for word in sentence.words]
         self.tokens_tagged = [(word.text, word.xpos) for sentence in doc.sentences for word in sentence.words]
 
