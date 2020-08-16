@@ -6,7 +6,9 @@
 import nltk
 from stanza import Pipeline
 
-stopword_dict = set(nltk.corpus.stopwords.words('english'))
+with open('/content/drive/My Drive/SIFRank/auxiliary_data/japanese_stopwords.txt') as f:
+   stop_words = [line.rstrip('\n') for line in f]
+   stopword_dict = set(stop_words)
 
 
 class InputTextObj:
