@@ -9,7 +9,7 @@ torch==1.2.0
 stanza==1.0.0
 ```
 ## Download
-* ELMo ``elmo_2x4096_512_2048cnn_2xhighway_weights.hdf5`` from [here](https://allennlp.org/elmo) , and save it to the ``auxiliary_data/`` directory
+* ELMo(Japanese model) ``weights.hdf5`` from [here](https://allennlp.org/elmo) , and save it to the ``auxiliary_data/`` directory
 
 ## Sample usage
 ```
