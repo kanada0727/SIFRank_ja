@@ -170,7 +170,7 @@ def get_position_score(keyphrase_candidate_list, position_bias):
     return position_score
 
 
-def SIFRank(text, SIF, en_model, method="average", N=15,
+def SIFRank(text, SIF, ja_model, method="average", N=15,
             sent_emb_method="elmo", elmo_layers_weight=[0.0, 1.0, 0.0], if_DS=True, if_EA=True):
     """
     :param text_obj:
@@ -185,7 +185,7 @@ def SIFRank(text, SIF, en_model, method="average", N=15,
     :param if_EA: if take  embeddings alignment(EA)
     :return:
     """
-    text_obj = input_representation.InputTextObj(en_model, text)
+    text_obj = input_representation.InputTextObj(ja_model, text)
     sent_embeddings, candidate_embeddings_list = SIF.get_tokenized_sent_embeddings(text_obj, if_DS=if_DS, if_EA=if_EA)
     dist_list = []
     for i, emb in enumerate(candidate_embeddings_list):
@@ -200,7 +200,7 @@ def SIFRank(text, SIF, en_model, method="average", N=15,
     return keywords, relevance
 
 
-def SIFRank_plus(text, SIF, en_model, method="average", N=15,
+def SIFRank_plus(text, SIF, ja_model, method="average", N=15,
                  sent_emb_method="elmo", elmo_layers_weight=[0.0, 1.0, 0.0], if_DS=True, if_EA=True, position_bias=3.4):
     """
     :param text_obj:
@@ -213,7 +213,7 @@ def SIFRank_plus(text, SIF, en_model, method="average", N=15,
     :param elmo_layers_weight: the weights of different layers of ELMo
     :return:
     """
-    text_obj = input_representation.InputTextObj(en_model, text)
+    text_obj = input_representation.InputTextObj(ja_model, text)
     sent_embeddings, candidate_embeddings_list = SIF.get_tokenized_sent_embeddings(text_obj, if_DS=if_DS, if_EA=if_EA)
     position_score = get_position_score(text_obj.keyphrase_candidate, position_bias)
     average_score = sum(position_score.values()) / (float)(len(position_score))  # Little change here
