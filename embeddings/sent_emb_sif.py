@@ -8,7 +8,7 @@ import nltk
 from nltk.corpus import stopwords
 
 english_punctuations = [',', '.', ':', ';', '?', '(', ')', '[', ']', '&', '!', '*', '@', '#', '$', '%']
-with open('/content/drive/My Drive/SIFRank/auxiliary_data/japanese_stopwords.txt') as f:
+with open('/content/drive/My Drive/SIFRank_ja_model/auxiliary_data/japanese_stopwords.txt') as f:
    stop_words = [line.rstrip('\n') for line in f]
    stop_words = set(stop_words)
 wnl = nltk.WordNetLemmatizer()
@@ -17,20 +17,20 @@ considered_tags = {'NN', 'NNS', 'NNP', 'NNPS', 'JJ', 'VBG'}
 
 class SentEmbeddings:
 
-    def __init__(self, word_embeddor, weightfile_pretrain='/content/drive/My Drive/SIFRank/auxiliary_data/corpus_vocab.txt',
-                 weightfile_finetune='/content/drive/My Drive/SIFRank/auxiliary_data/inspec_vocab.txt', weightpara_pretrain=2.7e-4, weightpara_finetune=2.7e-4,
+    def __init__(self, word_embeddor, weightfile_pretrain='/content/drive/My Drive/SIFRank_ja_model/auxiliary_data/corpus_vocab.txt',
+                 weightfile_finetune='/content/drive/My Drive/SIFRank_ja_model/auxiliary_data/inspec_vocab.txt', weightpara_pretrain=2.7e-4, weightpara_finetune=2.7e-4,
                  lamda=1.0, database="", embeddings_type="elmo"):
 
-        weightfile_pretrain = '/content/drive/My Drive/SIFRank/auxiliary_data/corpus_vocab.txt'
+        weightfile_pretrain = '/content/drive/My Drive/SIFRank_ja_model/auxiliary_data/corpus_vocab.txt'
 
         if (database == "Inspec"):
-            weightfile_finetune = '/content/drive/My Drive/SIFRank/auxiliary_data/inspec_vocab.txt'
+            weightfile_finetune = '/content/drive/My Drive/SIFRank_ja_model/auxiliary_data/inspec_vocab.txt'
         elif (database == "Duc2001"):
-            weightfile_finetune = '/content/drive/My Drive/SIFRank/auxiliary_data/duc2001_vocab.txt'
+            weightfile_finetune = '/content/drive/My Drive/SIFRank_ja_model/auxiliary_data/duc2001_vocab.txt'
         elif (database == "SemEval2017"):
-            weightfile_finetune = '/content/drive/My Drive/SIFRank/auxiliary_data/semeval_vocab.txt'
+            weightfile_finetune = '/content/drive/My Drive/SIFRank_ja_model/auxiliary_data/semeval_vocab.txt'
         else:
-            weightfile_finetune = '/content/drive/My Drive/SIFRank/auxiliary_data/corpus_vocab.txt'
+            weightfile_finetune = '/content/drive/My Drive/SIFRank_ja_model/auxiliary_data/corpus_vocab.txt'
 
         self.word2weight_pretrain = get_word_weight(weightfile_pretrain, weightpara_pretrain)
         self.word2weight_finetune = get_word_weight(weightfile_finetune, weightpara_finetune)
