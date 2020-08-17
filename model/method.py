@@ -170,7 +170,7 @@ def get_position_score(keyphrase_candidate_list, position_bias):
     return position_score
 
 
-def SIFRank(text, SIF, ja_model, method="average", N=5,
+def SIFRank(text, SIF, ja_model, method="average", N,
             sent_emb_method="elmo", elmo_layers_weight=[0.0, 1.0, 0.0], if_DS=True, if_EA=True):
     """
     :param text_obj:
@@ -197,10 +197,10 @@ def SIFRank(text, SIF, ja_model, method="average", N=5,
     keywords = [item[0] for item in dist_sorted]
     relevance = [item[1] for item in dist_sorted]
 
-    return keywords, relevance
+    return keywords[:N], relevance[:N]
 
 
-def SIFRank_plus(text, SIF, ja_model, method="average", N=5,
+def SIFRank_plus(text, SIF, ja_model, method="average", N,
                  sent_emb_method="elmo", elmo_layers_weight=[0.0, 1.0, 0.0], if_DS=True, if_EA=True, position_bias=3.4):
     """
     :param text_obj:
@@ -230,4 +230,4 @@ def SIFRank_plus(text, SIF, ja_model, method="average", N=5,
     keywords = [item[0] for item in dist_sorted]
     relevance = [item[1] for item in dist_sorted]
 
-    return keywords, relevance
+    return keywords[:N], relevance[:N]
