@@ -6,7 +6,7 @@
 import nltk
 from stanza import Pipeline
 
-with open('/content/drive/My Drive/SIFRank/auxiliary_data/japanese_stopwords.txt') as f:
+with open('/content/drive/My Drive/SIFRank_ja_model/auxiliary_data/japanese_stopwords.txt') as f:
    stop_words = [line.rstrip('\n') for line in f]
    stopword_dict = set(stop_words)
 
