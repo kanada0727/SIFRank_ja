@@ -14,7 +14,7 @@ class WordEmbeddings():
 
     """
 
-    def __init__(self, options_file='https://exawizardsallenlp.blob.core.windows.net/data/options.json', weight_file='/content/drive/My Drive/SIFRank/auxiliary_data/weights.hdf5', cuda_device=0):
+    def __init__(self, options_file='https://exawizardsallenlp.blob.core.windows.net/data/options.json', weight_file='/content/drive/My Drive/SIFRank_ja_model/auxiliary_data/weights.hdf5', cuda_device=0):
         self.cuda_device = cuda_device
         self.elmo = ElmoEmbedder(options_file, weight_file, cuda_device=self.cuda_device)
 
