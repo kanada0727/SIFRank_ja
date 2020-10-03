@@ -14,15 +14,15 @@ stanza==1.0.0
 ## Sample usage
 ```
 import sys
-sys.path.append('/content/drive/My Drive/SIFRank_ja_model')
-sys.path.append('/content/drive/My Drive/SIFRank_ja_model/embeddings')
+sys.path.append('/content/drive/My Drive/SIFRank_ja')
+sys.path.append('/content/drive/My Drive/SIFRank_ja/embeddings')
 import stanza
 import sent_emb_sif, word_emb_elmo
 from model.method import SIFRank, SIFRank_plus
 
 #download from https://allennlp.org/elmo
 options_file = "https://exawizardsallenlp.blob.core.windows.net/data/options.json"
-weight_file = "/content/drive/My Drive/SIFRank_ja_model/auxiliary_data/weights.hdf5"
+weight_file = "/content/drive/My Drive/SIFRank_ja/auxiliary_data/weights.hdf5"
 
 ELMO = word_emb_elmo.WordEmbeddings(options_file, weight_file, cuda_device=0)
 SIF = sent_emb_sif.SentEmbeddings(ELMO, lamda=1.0)
