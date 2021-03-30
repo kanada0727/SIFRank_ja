@@ -8,11 +8,16 @@ import nltk
 from nltk.corpus import stopwords
 from model import input_representation
 import torch
+import os
 
 wnl = nltk.WordNetLemmatizer()
-with open('/content/drive/My Drive/SIFRank_ja/auxiliary_data/japanese_stopwords.txt') as f:
-   stop_words = [line.rstrip('\n') for line in f]
-   stop_words = set(stop_words)
+with open(
+    os.path.join(
+        os.path.dirname(__file__),
+        "../" "/auxiliary_data/japanese_stopwords.txt",
+    )
+) as f:
+    stop_words = [line.rstrip("\n") for line in f]
 
 
 def cos_sim_gpu(x, y):
@@ -40,7 +45,7 @@ def cos_sim(vector_a, vector_b):
     vector_b = np.mat(vector_b)
     num = float(vector_a * vector_b.T)
     denom = np.linalg.norm(vector_a) * np.linalg.norm(vector_b)
-    if (denom == 0.0):
+    if denom == 0.0:
         return 0.0
     else:
         cos = num / denom
@@ -62,7 +67,7 @@ def cos_sim_transformer(vector_a, vector_b):
 
     num = float(a * b.T)
     denom = np.linalg.norm(a) * np.linalg.norm(b)
-    if (denom == 0.0):
+    if denom == 0.0:
         return 0.0
     else:
         cos = num / denom
@@ -70,10 +75,12 @@ def cos_sim_transformer(vector_a, vector_b):
         return sim
 
 
-def get_dist_cosine(emb1, emb2, sent_emb_method="elmo", elmo_layers_weight=[0.0, 1.0, 0.0]):
+def get_dist_cosine(
+    emb1, emb2, sent_emb_method="elmo", elmo_layers_weight=[0.0, 1.0, 0.0]
+):
     sum = 0.0
     assert emb1.shape == emb2.shape
-    if (sent_emb_method == "elmo"):
+    if sent_emb_method == "elmo":
 
         for i in range(0, 3):
             a = emb1[i]
@@ -81,34 +88,34 @@ def get_dist_cosine(emb1, emb2, sent_emb_method="elmo", elmo_layers_weight=[0.0,
             sum += cos_sim(a, b) * elmo_layers_weight[i]
         return sum
 
-    elif (sent_emb_method == "elmo_transformer"):
+    elif sent_emb_method == "elmo_transformer":
         sum = cos_sim_transformer(emb1, emb2)
         return sum
 
-    elif (sent_emb_method == "doc2vec"):
+    elif sent_emb_method == "doc2vec":
         sum = cos_sim(emb1, emb2)
         return sum
 
-    elif (sent_emb_method == "glove"):
+    elif sent_emb_method == "glove":
         sum = cos_sim(emb1, emb2)
         return sum
     return sum
 
 
 def get_all_dist(candidate_embeddings_list, text_obj, dist_list):
-    '''
+    """
     :param candidate_embeddings_list:
     :param text_obj:
     :param dist_list:
     :return: dist_all
-    '''
+    """
 
     dist_all = {}
     for i, emb in enumerate(candidate_embeddings_list):
-        phrase = text_obj.keyphrase_candidate[i][0]
+        phrase = "".join(text_obj.keyphrase_candidate[i])
         phrase = phrase.lower()
         phrase = wnl.lemmatize(phrase)
-        if (phrase in dist_all):
+        if phrase in dist_all:
             # store the No. and distance
             dist_all[phrase].append(dist_list[i])
         else:
@@ -118,21 +125,21 @@ def get_all_dist(candidate_embeddings_list, text_obj, dist_list):
 
 
 def get_final_dist(dist_all, method="average"):
-    '''
+    """
     :param dist_all:
     :param method: "average"
     :return:
-    '''
+    """
 
     final_dist = {}
 
-    if (method == "average"):
+    if method == "average":
 
         for phrase, dist_list in dist_all.items():
             sum_dist = 0.0
             for dist in dist_list:
                 sum_dist += dist
-            if (phrase in stop_words):
+            if phrase in stop_words:
                 sum_dist = 0.0
             final_dist[phrase] = sum_dist / float(len(dist_list))
         return final_dist
@@ -170,8 +177,17 @@ def get_position_score(keyphrase_candidate_list, position_bias):
     return position_score
 
 
-def SIFRank(text, SIF, ja_model, method="average", N,
-            sent_emb_method="elmo", elmo_layers_weight=[0.0, 1.0, 0.0], if_DS=True, if_EA=True):
+def SIFRank(
+    text,
+    SIF,
+    ja_model,
+    method="average",
+    N=5,
+    sent_emb_method="elmo",
+    elmo_layers_weight=[0.0, 1.0, 0.0],
+    if_DS=True,
+    if_EA=True,
+):
     """
     :param text_obj:
     :param sent_embeddings:
@@ -186,10 +202,14 @@ def SIFRank(text, SIF, ja_model, method="average", N,
     :return:
     """
     text_obj = input_representation.InputTextObj(ja_model, text)
-    sent_embeddings, candidate_embeddings_list = SIF.get_tokenized_sent_embeddings(text_obj, if_DS=if_DS, if_EA=if_EA)
+    sent_embeddings, candidate_embeddings_list = SIF.get_tokenized_sent_embeddings(
+        text_obj, if_DS=if_DS, if_EA=if_EA
+    )
     dist_list = []
     for i, emb in enumerate(candidate_embeddings_list):
-        dist = get_dist_cosine(sent_embeddings, emb, sent_emb_method, elmo_layers_weight=elmo_layers_weight)
+        dist = get_dist_cosine(
+            sent_embeddings, emb, sent_emb_method, elmo_layers_weight=elmo_layers_weight
+        )
         dist_list.append(dist)
     dist_all = get_all_dist(candidate_embeddings_list, text_obj, dist_list)
     dist_final = get_final_dist(dist_all, method=method)
@@ -200,8 +220,18 @@ def SIFRank(text, SIF, ja_model, method="average", N,
     return keywords[:N], relevance[:N]
 
 
-def SIFRank_plus(text, SIF, ja_model, method="average", N,
-                 sent_emb_method="elmo", elmo_layers_weight=[0.0, 1.0, 0.0], if_DS=True, if_EA=True, position_bias=3.4):
+def SIFRank_plus(
+    text,
+    SIF,
+    ja_model,
+    method="average",
+    N=5,
+    sent_emb_method="elmo",
+    elmo_layers_weight=[0.0, 1.0, 0.0],
+    if_DS=True,
+    if_EA=True,
+    position_bias=3.4,
+):
     """
     :param text_obj:
     :param sent_embeddings:
@@ -214,18 +244,26 @@ def SIFRank_plus(text, SIF, ja_model, method="average", N,
     :return:
     """
     text_obj = input_representation.InputTextObj(ja_model, text)
-    sent_embeddings, candidate_embeddings_list = SIF.get_tokenized_sent_embeddings(text_obj, if_DS=if_DS, if_EA=if_EA)
+    sent_embeddings, candidate_embeddings_list = SIF.get_tokenized_sent_embeddings(
+        text_obj, if_DS=if_DS, if_EA=if_EA
+    )
     position_score = get_position_score(text_obj.keyphrase_candidate, position_bias)
-    average_score = sum(position_score.values()) / (float)(len(position_score))  # Little change here
+    average_score = sum(position_score.values()) / (float)(
+        len(position_score) + 1
+    )  # Little change here
     dist_list = []
     for i, emb in enumerate(candidate_embeddings_list):
-        dist = get_dist_cosine(sent_embeddings, emb, sent_emb_method, elmo_layers_weight=elmo_layers_weight)
+        dist = get_dist_cosine(
+            sent_embeddings, emb, sent_emb_method, elmo_layers_weight=elmo_layers_weight
+        )
         dist_list.append(dist)
     dist_all = get_all_dist(candidate_embeddings_list, text_obj, dist_list)
     dist_final = get_final_dist(dist_all, method=method)
     for np, dist in dist_final.items():
         if np in position_score:
-            dist_final[np] = dist * position_score[np] / average_score  # Little change here
+            dist_final[np] = (
+                dist * position_score[np] / (average_score + 1)
+            )  # Little change here
     dist_sorted = sorted(dist_final.items(), key=lambda x: x[1], reverse=True)
     keywords = [item[0] for item in dist_sorted]
     relevance = [item[1] for item in dist_sorted]
